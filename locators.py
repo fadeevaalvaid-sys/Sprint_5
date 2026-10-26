@@ -15,7 +15,7 @@ class NavigationLocators:
         "//p[normalize-space()='Личный Кабинет']"
     )
 
-        # Ссылка «Конструктор»
+    # Ссылка «Конструктор»
     CONSTRUCTOR_LINK = (
         By.XPATH,
         "//a[@href='/' and .//p[normalize-space()='Конструктор']]"
@@ -26,6 +26,7 @@ class NavigationLocators:
         By.XPATH,
         "//div[contains(@class, 'header__logo')]//a[@href='/']"
     )
+
 
 class RegistrationLocators:
     # Поле ввода имени
@@ -101,7 +102,7 @@ class LoginLocators:
         By.CSS_SELECTOR,
         "a[href='/login']"
     )
-    
+
     # Кнопка «Конструктор» после успешного входа
     CONSTRUCTOR_BUTTON = (
         By.XPATH,
@@ -112,9 +113,9 @@ class LoginLocators:
     LOGOUT_BUTTON = (
         By.XPATH,
         "//button[normalize-space()='Выход']"
-        )
+    )
 
-    
+
 class ConstructorLocators:
     # Раздел «Булки»
     BUNS_TAB = (
@@ -132,4 +133,10 @@ class ConstructorLocators:
     FILLINGS_TAB = (
         By.XPATH,
         "//div[contains(@class, 'tab_tab')][.//span[normalize-space()='Начинки']]"
+    )
+
+    # Активная вкладка. Не зависит от окончания сгенерированного хэша
+    ACTIVE_TAB = (
+        By.CSS_SELECTOR,
+        "[class*='tab_tab_type_current']"
     )

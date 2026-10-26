@@ -1,4 +1,3 @@
-
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -45,7 +44,7 @@ def login(driver):
 
 
 def logout(driver):
-    """Проверяет авторизацию и выходит из аккаунта."""
+    """Выходит из авторизованного аккаунта."""
     wait = WebDriverWait(driver, 15)
 
     # Открываем личный кабинет
@@ -55,82 +54,88 @@ def logout(driver):
         )
     ).click()
 
-    # Наличие кнопки «Выход» подтверждает авторизацию
+    # Находим кнопку «Выход»
     logout_button = wait.until(
         EC.element_to_be_clickable(
             LoginLocators.LOGOUT_BUTTON
         )
     )
-
     logout_button.click()
 
     # Ждём перехода на страницу входа
     wait.until(EC.url_contains("/login"))
 
 
-# Вход через кнопку «Войти в аккаунт» на главной странице
-def test_login_from_home_button(driver):
-    wait = WebDriverWait(driver, 15)
-    driver.get(BASE_URL)
+class TestLogin:
 
-    wait.until(
-        EC.element_to_be_clickable(
-            NavigationLocators.LOGIN_BUTTON_HOME
-        )
-    ).click()
+    def test_login_from_home_button(self, driver):
+        """Проверяет вход через кнопку на главной странице."""
+        wait = WebDriverWait(driver, 15)
+        driver.get(BASE_URL)
 
-    wait.until(EC.url_contains("/login"))
+        wait.until(
+            EC.element_to_be_clickable(
+                NavigationLocators.LOGIN_BUTTON_HOME
+            )
+        ).click()
 
-    login(driver)
-    logout(driver)
+        wait.until(EC.url_contains("/login"))
 
+        login(driver)
+        logout(driver)
 
-# Вход через кнопку «Личный кабинет»
-def test_login_from_personal_account(driver):
-    wait = WebDriverWait(driver, 15)
-    driver.get(BASE_URL)
+        assert "/login" in driver.current_url
 
-    wait.until(
-        EC.element_to_be_clickable(
-            NavigationLocators.PERSONAL_ACCOUNT_BUTTON
-        )
-    ).click()
+    def test_login_from_personal_account(self, driver):
+        """Проверяет вход через кнопку «Личный кабинет»."""
+        wait = WebDriverWait(driver, 15)
+        driver.get(BASE_URL)
 
-    wait.until(EC.url_contains("/login"))
+        wait.until(
+            EC.element_to_be_clickable(
+                NavigationLocators.PERSONAL_ACCOUNT_BUTTON
+            )
+        ).click()
 
-    login(driver)
-    logout(driver)
+        wait.until(EC.url_contains("/login"))
 
+        login(driver)
+        logout(driver)
 
-# Вход через ссылку в форме регистрации
-def test_login_from_registration_form(driver):
-    wait = WebDriverWait(driver, 15)
-    driver.get(BASE_URL + "register")
+        assert "/login" in driver.current_url
 
-    wait.until(
-        EC.element_to_be_clickable(
-            RegistrationLocators.LOGIN_LINK_FROM_REGISTER
-        )
-    ).click()
+    def test_login_from_registration_form(self, driver):
+        """Проверяет вход по ссылке в форме регистрации."""
+        wait = WebDriverWait(driver, 15)
+        driver.get(BASE_URL + "register")
 
-    wait.until(EC.url_contains("/login"))
+        wait.until(
+            EC.element_to_be_clickable(
+                RegistrationLocators.LOGIN_LINK_FROM_REGISTER
+            )
+        ).click()
 
-    login(driver)
-    logout(driver)
+        wait.until(EC.url_contains("/login"))
 
+        login(driver)
+        logout(driver)
 
-# Вход через ссылку на странице восстановления пароля
-def test_login_from_forgot_password_form(driver):
-    wait = WebDriverWait(driver, 15)
-    driver.get(BASE_URL + "forgot-password")
+        assert "/login" in driver.current_url
 
-    wait.until(
-        EC.element_to_be_clickable(
-            LoginLocators.LOGIN_LINK_FROM_FORGOT_PASSWORD
-        )
-    ).click()
+    def test_login_from_forgot_password_form(self, driver):
+        """Проверяет вход по ссылке со страницы восстановления пароля."""
+        wait = WebDriverWait(driver, 15)
+        driver.get(BASE_URL + "forgot-password")
 
-    wait.until(EC.url_contains("/login"))
+        wait.until(
+            EC.element_to_be_clickable(
+                LoginLocators.LOGIN_LINK_FROM_FORGOT_PASSWORD
+            )
+        ).click()
 
-    login(driver)
-    logout(driver)
+        wait.until(EC.url_contains("/login"))
+
+        login(driver)
+        logout(driver)
+
+        assert "/login" in driver.current_url

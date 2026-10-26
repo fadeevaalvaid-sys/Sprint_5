@@ -1,4 +1,3 @@
-
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -59,31 +58,36 @@ def login_and_open_personal_account(driver):
     )
 
 
-def test_transition_to_constructor(driver):
-    """Проверяет переход в конструктор по ссылке «Конструктор»."""
-    wait = WebDriverWait(driver, 15)
-    login_and_open_personal_account(driver)
+class TestConstructor:
 
-    wait.until(
-        EC.element_to_be_clickable(
-            NavigationLocators.CONSTRUCTOR_LINK
-        )
-    ).click()
+    def test_transition_to_constructor(self, driver):
+        """Проверяет переход в конструктор по ссылке «Конструктор»."""
+        wait = WebDriverWait(driver, 15)
+        login_and_open_personal_account(driver)
 
-    # Проверяем переход на главную страницу
-    wait.until(EC.url_to_be(BASE_URL))
+        wait.until(
+            EC.element_to_be_clickable(
+                NavigationLocators.CONSTRUCTOR_LINK
+            )
+        ).click()
 
+        # Проверяем переход на главную страницу
+        wait.until(EC.url_to_be(BASE_URL))
 
-def test_transition_to_constructor_by_logo(driver):
-    """Проверяет переход в конструктор по клику на логотип."""
-    wait = WebDriverWait(driver, 15)
-    login_and_open_personal_account(driver)
+        assert driver.current_url == BASE_URL
 
-    wait.until(
-        EC.element_to_be_clickable(
-            NavigationLocators.LOGO_LINK
-        )
-    ).click()
+    def test_transition_to_constructor_by_logo(self, driver):
+        """Проверяет переход в конструктор по клику на логотип."""
+        wait = WebDriverWait(driver, 15)
+        login_and_open_personal_account(driver)
 
-     # Проверяем переход на главную страницу
-    wait.until(EC.url_to_be(BASE_URL))
+        wait.until(
+            EC.element_to_be_clickable(
+                NavigationLocators.LOGO_LINK
+            )
+        ).click()
+
+        # Проверяем переход на главную страницу
+        wait.until(EC.url_to_be(BASE_URL))
+
+        assert driver.current_url == BASE_URL

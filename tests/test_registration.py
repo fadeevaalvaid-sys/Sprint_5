@@ -9,110 +9,117 @@ from locators import NavigationLocators, RegistrationLocators
 BASE_URL = "https://qa-stellarburgers.education-services.ru/"
 
 
-def test_registration_with_short_password(driver):
-    wait = WebDriverWait(driver, 15)
+class TestRegistration:
 
-    # Открываем главную страницу
-    driver.get(BASE_URL)
+    def test_registration_with_short_password(self, driver):
+        """Проверяет ошибку при вводе слишком короткого пароля."""
+        wait = WebDriverWait(driver, 15)
 
-    # Переходим к форме входа
-    wait.until(
-        EC.element_to_be_clickable(
-            NavigationLocators.LOGIN_BUTTON_HOME
+        # Открываем главную страницу
+        driver.get(BASE_URL)
+
+        # Переходим к форме входа
+        wait.until(
+            EC.element_to_be_clickable(
+                NavigationLocators.LOGIN_BUTTON_HOME
+            )
+        ).click()
+
+        # Переходим к форме регистрации
+        wait.until(
+            EC.element_to_be_clickable(
+                RegistrationLocators.REGISTER_LINK
+            )
+        ).click()
+
+        # Заполняем имя
+        wait.until(
+            EC.visibility_of_element_located(
+                RegistrationLocators.NAME_INPUT
+            )
+        ).send_keys("Анастасия")
+
+        # Вводим уникальный email
+        driver.find_element(
+            *RegistrationLocators.EMAIL_INPUT
+        ).send_keys(generate_email())
+
+        # Намеренно вводим короткий пароль
+        driver.find_element(
+            *RegistrationLocators.PASSWORD_INPUT
+        ).send_keys("12345")
+
+        # Убираем фокус с поля пароля
+        driver.find_element(
+            *RegistrationLocators.NAME_INPUT
+        ).click()
+
+        # Проверяем сообщение об ошибке
+        password_error = wait.until(
+            EC.visibility_of_element_located(
+                RegistrationLocators.PASSWORD_ERROR
+            )
         )
-    ).click()
+        assert password_error.text == "Некорректный пароль"
 
-    # Переходим к форме регистрации
-    wait.until(
-        EC.element_to_be_clickable(
-            RegistrationLocators.REGISTER_LINK
-        )
-    ).click()
+        # Нажимаем кнопку регистрации
+        driver.find_element(
+            *RegistrationLocators.REGISTER_BUTTON
+        ).click()
 
-    # Заполняем поля регистрации
-    wait.until(
-        EC.visibility_of_element_located(
-            RegistrationLocators.NAME_INPUT
-        )
-    ).send_keys("Анастасия")
+        # Проверяем, что остались на странице регистрации
+        wait.until(EC.url_contains("/register"))
 
-    driver.find_element(
-        *RegistrationLocators.EMAIL_INPUT
-    ).send_keys(generate_email())
+        assert "/register" in driver.current_url
 
-    # Намеренно короткий пароль для проверки валидации
-    driver.find_element(
-        *RegistrationLocators.PASSWORD_INPUT
-    ).send_keys("12345")
+    def test_successful_registration(self, driver):
+        """Проверяет успешную регистрацию нового пользователя."""
+        wait = WebDriverWait(driver, 15)
 
-    # Убираем фокус с поля пароля
-    driver.find_element(
-        *RegistrationLocators.NAME_INPUT
-    ).click()
+        # Генерируем уникальные данные
+        email = generate_email()
+        password = generate_password()
 
-    # Проверяем сообщение об ошибке
-    password_error = wait.until(
-        EC.visibility_of_element_located(
-            RegistrationLocators.PASSWORD_ERROR
-        )
-    )
+        # Открываем главную страницу
+        driver.get(BASE_URL)
 
-    assert password_error.text == "Некорректный пароль"
+        # Переходим к форме входа
+        wait.until(
+            EC.element_to_be_clickable(
+                NavigationLocators.LOGIN_BUTTON_HOME
+            )
+        ).click()
 
-    # Нажимаем кнопку регистрации
-    driver.find_element(
-        *RegistrationLocators.REGISTER_BUTTON
-    ).click()
+        # Переходим к форме регистрации
+        wait.until(
+            EC.element_to_be_clickable(
+                RegistrationLocators.REGISTER_LINK
+            )
+        ).click()
 
-    # Проверяем, что остались на странице регистрации
-    wait.until(EC.url_contains("/register"))
-    assert "/register" in driver.current_url
+        # Заполняем имя
+        wait.until(
+            EC.visibility_of_element_located(
+                RegistrationLocators.NAME_INPUT
+            )
+        ).send_keys("Анастасия")
 
+        # Вводим email
+        driver.find_element(
+            *RegistrationLocators.EMAIL_INPUT
+        ).send_keys(email)
 
-def test_successful_registration(driver):
-    wait = WebDriverWait(driver, 15)
+        # Вводим пароль
+        driver.find_element(
+            *RegistrationLocators.PASSWORD_INPUT
+        ).send_keys(password)
 
-    # Генерируем уникальные данные для регистрации
-    email = generate_email()
-    password = generate_password()
+        # Нажимаем кнопку регистрации
+        driver.find_element(
+            *RegistrationLocators.REGISTER_BUTTON
+        ).click()
 
-    # Открываем главную страницу
-    driver.get(BASE_URL)
+        # Проверяем переход на страницу входа
+        wait.until(EC.url_contains("/login"))
 
-    # Переходим к форме входа
-    wait.until(
-        EC.element_to_be_clickable(
-            NavigationLocators.LOGIN_BUTTON_HOME
-        )
-    ).click()
-
-    # Переходим к форме регистрации
-    wait.until(
-        EC.element_to_be_clickable(
-            RegistrationLocators.REGISTER_LINK
-        )
-    ).click()
-
-    # Заполняем поля регистрации
-    wait.until(
-        EC.visibility_of_element_located(
-            RegistrationLocators.NAME_INPUT
-        )
-    ).send_keys("Анастасия")
-
-    driver.find_element(
-        *RegistrationLocators.EMAIL_INPUT
-    ).send_keys(email)
-
-    driver.find_element(
-        *RegistrationLocators.PASSWORD_INPUT
-    ).send_keys(password)
-
-    # Нажимаем кнопку регистрации
-    driver.find_element(
-        *RegistrationLocators.REGISTER_BUTTON
-    ).click()
-
-    # Проверяем переход на страницу входа
-    wait.until(EC.url_contains("/login"))
-    assert "/login" in driver.current_url
+        assert "/login" in driver.current_url
